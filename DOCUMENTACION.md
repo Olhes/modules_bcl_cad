@@ -7,7 +7,10 @@ Proyecto para crear bindings de Python para BRL-CAD, permitiendo acceder a la AP
 ✅ **Completado:**
 - Carga de bibliotecas DLL de BRL-CAD
 - Mapeo de función `db_open`
-- Wrapper `open_db()` en Python
+- Mapeo de función `db_close`
+- Mapeo de función `db_lookup`
+- Wrapper `open_db()` y `close_db()` en Python
+- Wrapper `lookup_object()` para búsqueda de objetos
 - Tests funcionales
 - Estructura modular
 
@@ -52,6 +55,17 @@ print(f"BRL-CAD Version: {version.decode('utf-8')}")
 db_path = "C:/Program Files/BRL-CAD 7.32.2/share/db/cube.g"
 db_handle = open_db(db_path)
 print(f"Database opened with handle: {db_handle}")
+
+# Cerrar base de datos
+close_result = close_db(db_handle)
+print(f"Database closed with result: {close_result}")
+
+# Buscar objeto en la base de datos
+obj_handle = lookup_object(db_handle, "object_name")
+if obj_handle:
+    print(f"Object found with handle: {obj_handle}")
+else:
+    print("Object not found")
 ```
 
 ### Bases de datos disponibles
@@ -84,6 +98,8 @@ librt = ctypes.CDLL(r"C:\Program Files\BRL-CAD 7.32.2\bin\librt.dll")
 # Funciones configuradas
 libbu.bu_version()          # Retorna versión de BRL-CAD
 librt.db_open(file, mode)   # Abre base de datos
+librt.db_close(handle)      # Cierra base de datos
+librt.db_lookup(handle, name, noisy)  # Busca objetos en la base de datos
 ```
 
 ### utils/utils.py
@@ -103,6 +119,26 @@ Abre una base de datos de BRL-CAD.
 **Lanza:**
 - `FileNotFoundError`: Si no se puede abrir la base de datos
 
+#### `close_db(db_handle)`
+Cierra una base de datos de BRL-CAD.
+
+**Parámetros:**
+- `db_handle` (int): Handle a la base de datos
+
+**Retorna:**
+- `int`: 0 si éxito, !=0 si error
+
+#### `lookup_object(db_handle, obj_name, noisy=1)`
+Busca un objeto en la base de datos de BRL-CAD.
+
+**Parámetros:**
+- `db_handle` (int): Handle a la base de datos
+- `obj_name` (str): Nombre del objeto a buscar
+- `noisy` (int): 1 para mostrar errores, 0 para silencioso
+
+**Retorna:**
+- `int`: Handle al objeto encontrado, 0 si no existe
+
 ## Testing
 
 Ejecuta los tests funcionales:
@@ -116,8 +152,19 @@ Salida esperada:
 BRL-CAD Version: BRL-CAD Release 7.32.2  The BRL-CAD Utility Library
 Abriendo base de datos: C:/Program Files/BRL-CAD 7.32.2/share/db/cube.g
 Base de datos abierta exitosamente. Handle: [número]
+
+--- Probando búsqueda de objetos ---
+Con noisy=1 (mostrar errores):
+db_lookup(object_name) failed: object_name does not exist
+❌ No encontrado: 'object_name'
+
+[Resultados de búsqueda de objetos]
+
+Base de datos cerrada. Resultado: 0
 ✅ Todos los tests pasaron correctamente
 ```
+
+**Nota:** La búsqueda de objetos puede no encontrar resultados si los nombres no coinciden exactamente con los objetos en la base de datos. Use `noisy=1` para ver mensajes de error detallados.
 
 ## Arquitectura
 
@@ -138,9 +185,11 @@ Las DLLs procesan los datos guardados en los archivos .g.
 
 ### Mapeo de funciones adicionales
 
-- `db_close(handle)` - Cerrar base de datos
-- `db_lookup(handle, name)` - Buscar objetos
+- ✅ `db_close(handle)` - Cerrar base de datos
+- ✅ `db_lookup(handle, name, noisy)` - Buscar objetos
 - `db_get(handle, obj_name)` - Obtener datos de objetos
+- `db_walk(handle, func, data)` - Recorrer todos los objetos
+- `db_put_internal(handle, dp, name, where)` - Agregar objetos
 
 ### Estructuras de datos
 

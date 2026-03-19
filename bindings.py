@@ -11,3 +11,14 @@ libbu.bu_version.argtypes = []
 # Configurar función db_open
 librt.db_open.restype = ctypes.c_void_p
 librt.db_open.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
+
+# Configurar función db_close
+librt.db_close.restype = ctypes.c_int
+librt.db_close.argtypes = [ctypes.c_void_p]
+
+librt.db_lookup.restype = ctypes.c_void_p
+librt.db_lookup.argtypes = [
+    ctypes.c_void_p,
+    ctypes.c_char_p,
+    ctypes.c_int
+]
