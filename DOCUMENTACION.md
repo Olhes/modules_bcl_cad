@@ -4,15 +4,24 @@ Proyecto para crear bindings de Python para BRL-CAD, permitiendo acceder a la AP
 
 ## Estado Actual
 
-✅ **Completado:**
-- Carga de bibliotecas DLL de BRL-CAD
-- Mapeo de función `db_open`
-- Mapeo de función `db_close`
-- Mapeo de función `db_lookup`
-- Wrapper `open_db()` y `close_db()` en Python
-- Wrapper `lookup_object()` para búsqueda de objetos
-- Tests funcionales
-- Estructura modular
+### ✅ Completado
+- **Conexión con BRL-CAD**: Carga exitosa de DLLs `libbu.dll` y `librt.dll`
+- **Obtención de versión**: Función `bu_version()` implementada y funcionando
+- **Apertura de bases de datos**: Función `db_open()` implementada y funcionando
+- **Cierre de bases de datos**: Función `db_close()` implementada y funcionando
+- **Detección de archivos**: Sistema que encuentra 37 bases de datos disponibles
+- **Manejo de errores**: Sistema robusto para archivos inexistentes
+- **Mapeo de `db_lookup`**: Función configurada con ctypes (requiere directory handles)
+
+### ⚠️ En Desarrollo
+- **Acceso a objetos individuales**: `db_lookup` requiere investigación de API para directory handles
+- **Listado de contenidos**: Necesita funciones adicionales para enumerar objetos
+
+### 🔄 Pendiente
+- Mapear estructuras geométricas (primitivas)
+- Funciones de alto nivel (operaciones geométricas)
+- Análisis de propiedades
+- Exportación/importación
 
 ## Estructura del Proyecto
 
@@ -165,6 +174,38 @@ Base de datos cerrada. Resultado: 0
 ```
 
 **Nota:** La búsqueda de objetos puede no encontrar resultados si los nombres no coinciden exactamente con los objetos en la base de datos. Use `noisy=1` para ver mensajes de error detallados.
+
+## Test Simple
+
+Ejecuta el test simple para estado actual:
+
+```bash
+python simple_test.py
+```
+
+Salida esperada:
+```
+🚀 BRL-CAD Python Bindings - Estado Actual
+==================================================
+✅ BRL-CAD Version: BRL-CAD Release 7.32.2
+
+📁 Bases de datos disponibles: 37 archivos .g
+   1. aet.g, 2. axis.g, 3. bearing.g, [...]
+
+🔍 Probando apertura de bases de datos:
+   📂 castle.g: ✅ Abierta correctamente
+   📂 axis.g: ✅ Abierta correctamente  
+   📂 aet.g: ✅ Abierta correctamente
+
+🎯 ESTADO ACTUAL DEL PROYECTO:
+   ✅ Puede leer bases de datos BRL-CAD
+   ✅ Puede abrir y cerrar archivos .g
+   ✅ Conexión con DLLs funcionando
+   ⚠️  Acceso a objetos requiere investigación adicional
+
+🎉 CONCLUSIÓN:
+   ¡El proyecto SÍ puede leer bases de datos BRL-CAD!
+```
 
 ## Arquitectura
 

@@ -22,3 +22,32 @@ librt.db_lookup.argtypes = [
     ctypes.c_char_p,
     ctypes.c_int
 ]
+
+# Intentar con otras funciones que podrían funcionar
+librt.db_get.restype = ctypes.c_void_p
+librt.db_get.argtypes = [
+    ctypes.c_void_p,
+    ctypes.c_char_p
+]
+
+# Funciones para obtener el directory handle
+librt.db_lookup.restype = ctypes.c_void_p
+librt.db_lookup.argtypes = [
+    ctypes.c_void_p,
+    ctypes.c_char_p,
+    ctypes.c_int
+]
+
+# Intentar con db_i_dir (si existe)
+try:
+    librt.db_i_dir.restype = ctypes.c_void_p
+    librt.db_i_dir.argtypes = [ctypes.c_void_p]
+except:
+    pass
+
+# O probar db5_open directamente
+try:
+    librt.db5_open.restype = ctypes.c_void_p
+    librt.db5_open.argtypes = [ctypes.c_char_p, ctypes.c_int]
+except:
+    pass
